@@ -1,0 +1,5 @@
+config.py
+bot/__pycache__/
+config.txt
+id_rsa
+id_rsa.pub
