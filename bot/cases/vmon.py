@@ -8,7 +8,7 @@ def action(trg):
 	config.read("/var/www/avgbot/bot/cases/config.txt")
 	result = 0
 	vm = trg.name
-	org = "AVG"
+	org = trg.cred
 
 	connection = SmartConnectNoSSL(**config[org])
 	content = connection.content

@@ -40,6 +40,7 @@ class Case(models.Model):
 
 
 class Target(models.Model):
+	TYPE = (("-","-"),("ovpn-client","ovpn-client"),("ppp-client","ppp-client"),("pptp-client","pptp-client"),("sstp-client","sstp-client"))
 	name = models.CharField(max_length=250)
 	description = models.TextField()
 	port = models.BigIntegerField(null=True, blank = True)
@@ -47,6 +48,11 @@ class Target(models.Model):
 	group = models.ForeignKey(Group, on_delete = models.CASCADE)
 	org = models.ManyToManyField(Org, null=True, blank = True)
 	case = ChainedManyToManyField(Case, horizontal=True, chained_field='group', chained_model_field='group', blank=True, null=True)
+	interface = models.CharField(max_length=250, null=True, blank = True)
+	service = models.CharField(max_length=250, null=True, blank = True)
+	cred = models.CharField(max_length=250, null=True, blank = True)
+	vpntype = models.CharField(max_length = 20, choices = TYPE, default = '-')
+
 	def __str__(self):
 		return self.name
 
