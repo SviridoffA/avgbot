@@ -33,12 +33,17 @@ def mainmenu(accs,trguser):
 	kb.row(u'Наши контакты')
 	return kb
 
-def targetmenu(trgcases):
+def targetmenu(trgcases,trgservice):
 	kb = keyb()
 	chkbuton = 0
 	for i in trgcases:
-		kb.row(str(i))
-		chkbuton += 1
+		rw = str(i)
+		if 'службу' in rw or 'службы' in rw:
+			kb.row(rw + ' ' + trgservice)
+			chkbuton += 1
+		else:
+			kb.row(rw)
+			chkbuton += 1
 	if chkbuton == 0:
 		kb.row(u'Оставить обращение через телеграм')
 		kb.row(u'В главное меню')
@@ -137,8 +142,9 @@ def bot(request):
 			if m.step == 'end':
 				trg = Target.objects.get(name=text)
 				trgcases = trg.case.all()
+				trgservice = trg.service
 				User.objects.filter(chat_id=chat_id).update(CurrentHost=trg.name)
-				kb = targetmenu(trgcases)
+				kb = targetmenu(trgcases,trgservice)
 				if trg.case.count() == 0:
 					mes = 'Для данного обьекта ещё не назначены действия'
 				else:

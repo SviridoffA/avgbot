@@ -63,7 +63,7 @@ class Target(models.Model):
 
 class User(models.Model):
 	chat_id = models.BigIntegerField()
-	description = models.CharField(max_length=50)
+	description = models.CharField(max_length=50, null=True, blank = True)
 	username = models.CharField(max_length=120)
 	fio = models.CharField(max_length=120, null=True, blank = True)
 	is_admin = models.BooleanField(default = False)
