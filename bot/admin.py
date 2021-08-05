@@ -67,7 +67,7 @@ class CaseAdmin(admin.ModelAdmin):
 	list_display = ("name","script","admin",)
 
 class TargetAdmin(admin.ModelAdmin):
-	list_display = ('name','description','ip','port',)
+	list_display = ('visiblename','description','ip','port',)
 	list_filter = ('org','group')
 
 class GroupAdmin(admin.ModelAdmin):

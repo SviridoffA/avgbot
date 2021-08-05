@@ -20,16 +20,14 @@ def keyb():
 def mainmenu(accs,trguser):
 	kb = keyb()
 	chkbuton = 0
-	for i in trguser.target.all():
-		kb.row(str(i))
-		chkbuton += 1
-	if accs < 1:
-		kb = keyb()
+	if accs > 0:
+		for i in trguser.target.all():
+			kb.row(str(i))
+			chkbuton += 1
+	if chkbuton == 0:
 		kb.row(u'Оставить обращение через телеграм')
 		kb.row(u'В главное меню')
-	elif chkbuton == 0:
-		kb.row(u'Оставить обращение через телеграм')
-		kb.row(u'В главное меню')
+	kb.row(u'Обновить список')
 	kb.row(u'Наши контакты')
 	return kb
 
@@ -69,9 +67,12 @@ def bot(request):
 			msgexist = Message.objects.filter(chat_id=chat_id).count()
 			if exist > 0:
 				trguser = User.objects.get(chat_id=chat_id)
-				trgets = [target.name for target in trguser.target.all()]
+				trgets = [target.visiblename for target in trguser.target.all()]
 				caselist = [cases.name for cases in Case.objects.all()]
 				accs = trguser.target.count()
+			else:
+				accs = 0
+				trguser = 0
 
 #message steps
 		def name_step(chat_id,msgid,text):
@@ -119,7 +120,7 @@ def bot(request):
 							'Сообщение: \n' + str(snd.message) + '\n\n\n' + 'Свяжитесь с пользователем по указаному контакту!')
 
 
-		if exist != 0 and text == 'В главное меню' or text == 'Назад':
+		if exist != 0 and text == 'В главное меню' or text == 'Назад' or text == 'Обновить список':
 			trguser = User.objects.get(chat_id=chat_id)
 			accs = trguser.target.count()
 			kb = mainmenu(accs,trguser)
@@ -137,10 +138,14 @@ def bot(request):
 
 #target menu
 		if exist != 0 and text in trgets:
-			usrmsg = Message.objects.filter(chat_id=chat_id).latest('id')
-			m = Message.objects.get(id=usrmsg.id)
-			if m.step == 'end':
-				trg = Target.objects.get(name=text)
+			try:
+				usrmsg = Message.objects.filter(chat_id=chat_id).latest('id')
+				m = Message.objects.get(id=usrmsg.id)
+				step = m.step
+			except:
+				step = 0
+			if step == 0 or step == 'end':
+				trg = Target.objects.get(visiblename=text)
 				trgcases = trg.case.all()
 				trgservice = trg.service
 				User.objects.filter(chat_id=chat_id).update(CurrentHost=trg.name)
@@ -154,9 +159,13 @@ def bot(request):
 
 #case action
 		if exist != 0 and text in caselist:
-			usrmsg = Message.objects.filter(chat_id=chat_id).latest('id')
-			m = Message.objects.get(id=usrmsg.id)
-			if m.step == 'end':
+			try:
+				usrmsg = Message.objects.filter(chat_id=chat_id).latest('id')
+				m = Message.objects.get(id=usrmsg.id)
+				step = m.step
+			except:
+				step = 0
+			if step == 0 or step == 'end':
 				trg = Target.objects.get(name=trguser.CurrentHost)
 				if text in [cases.name for cases in trg.case.all()]:
 					script = trg.case.get(name=text).script
@@ -164,17 +173,17 @@ def bot(request):
 					result = int(act.action(trg))
 
 					if result == 2:
-						mess = "Пользователь %s \n %s \n поставил задачу - %s \n на узел - %s" % (trguser.username, trguser.fio, text, trguser.CurrentHost)
+						mess = "Пользователь %s \n %s \n поставил задачу - %s \n на узел - %s" % (trguser.username, trguser.fio, text, trg.visiblename)
 						mes = 'Задача ' + '"' + text + '"' + 'Выполнена успешно!!!'
-						Log.objects.create(user=trguser.username,log=text + ' на узле ' + trguser.CurrentHost + ' - Успех')
+						Log.objects.create(user=trguser.username,log=text + ' на узле ' + trg.visiblename + ' - Успех')
 					elif result == 1:
-						mess = "Пользователь %s \n %s \n поставил задачу - %s \n на узел - %s \n Но задача уже выполнена и не требует действий." % (trguser.username, trguser.fio, text, trguser.CurrentHost)
+						mess = "Пользователь %s \n %s \n поставил задачу - %s \n на узел - %s \n Но задача уже выполнена и не требует действий." % (trguser.username, trguser.fio, text, trg.visiblename)
 						mes = 'Задача ' + '"' + text + '"' + ' уже выполнена для данного узла, и более не требует действий.'
-						Log.objects.create(user=trguser.username,log=text + ' на узле ' + trguser.CurrentHost + ' - Уже выполнено')
+						Log.objects.create(user=trguser.username,log=text + ' на узле ' + trg.visiblename + ' - Уже выполнено')
 					else:
-						mess = "Пользователь %s \n %s \n поставил задачу - %s \n на узел - %s \n Но возникла ошибка!!" % (trguser.username, trguser.fio, text, trguser.CurrentHost)
+						mess = "Пользователь %s \n %s \n поставил задачу - %s \n на узел - %s \n Но возникла ошибка!!" % (trguser.username, trguser.fio, text, trg.visiblename)
 						mes = 'Не удалось выполнить задание, просим связаться с нами по контактам ниже!'
-						Log.objects.create(user=trguser.username,log=text + ' на узле ' + trguser.CurrentHost + ' - Ошибка')
+						Log.objects.create(user=trguser.username,log=text + ' на узле ' + trg.visiblename + ' - Ошибка')
 					bot.send_message(-1001425092968, mess) 
 				else:
 					mes = 'Задача ' + '"' + text + '"' + ' не назначена на данный узел'

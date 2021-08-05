@@ -42,6 +42,7 @@ class Case(models.Model):
 class Target(models.Model):
 	TYPE = (("-","-"),("ovpn-client","ovpn-client"),("ppp-client","ppp-client"),("pptp-client","pptp-client"),("sstp-client","sstp-client"))
 	name = models.CharField(max_length=250)
+	visiblename = models.CharField(max_length=250)
 	description = models.TextField()
 	port = models.BigIntegerField(null=True, blank = True)
 	ip = models.GenericIPAddressField(null=True, blank = True)
@@ -54,7 +55,7 @@ class Target(models.Model):
 	vpntype = models.CharField(max_length = 20, choices = TYPE, default = '-')
 
 	def __str__(self):
-		return self.name
+		return self.visiblename
 
 	class Meta:
 		verbose_name = 'Целевые системы и устройства'
