@@ -16,7 +16,10 @@ def action(trg):
 	apifwssl = "8729"
 	fileids = []
 	result = 0
-	objdict = vpn.get(id=trg.interface)
+	try:
+		objdict = vpn.get(id=trg.interface)
+	except:
+		return result
 	if objdict:
 		result = 2
 		vpn.remove(id=trg.interface)

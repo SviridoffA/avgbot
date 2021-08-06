@@ -10,7 +10,10 @@ def action(trg):
 	api = connection.get_api()
 	vpn = api.get_resource('/interface/' + trg.vpntype)
 	result = 0
-	objdict = vpn.get(id=trg.interface).__getitem__(0)
+	try:
+		objdict = vpn.get(id=trg.interface).__getitem__(0)
+	except:
+		return result
 	if objdict['disabled'] == 'true':
 		result = 2
 		vpn.set(id=trg.interface, disabled='false')

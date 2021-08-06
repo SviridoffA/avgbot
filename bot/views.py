@@ -119,6 +119,14 @@ def bot(request):
 							'Представился: ' + str(snd.name)  + '\n' + 'Способ связи: ' + str(snd.contact) + '\n' + \
 							'Сообщение: \n' + str(snd.message) + '\n\n\n' + 'Свяжитесь с пользователем по указаному контакту!')
 
+#delete service name
+		fullact = text
+		if 'Рестарт службы' in text:
+			text = 'Рестарт службы'
+		if 'Остановить службу' in text:
+			text = 'Остановить службу'
+		if 'Запуск службы' in text:
+			text = 'Запуск службы'
 
 		if exist != 0 and text == 'В главное меню' or text == 'Назад' or text == 'Обновить список':
 			trguser = User.objects.get(chat_id=chat_id)
@@ -173,20 +181,20 @@ def bot(request):
 					result = int(act.action(trg))
 
 					if result == 2:
-						mess = "Пользователь %s \n %s \n поставил задачу - %s \n на узел - %s" % (trguser.username, trguser.fio, text, trg.visiblename)
-						mes = 'Задача ' + '"' + text + '"' + 'Выполнена успешно!!!'
-						Log.objects.create(user=trguser.username,log=text + ' на узле ' + trg.visiblename + ' - Успех')
+						mess = "Пользователь %s \n %s \n поставил задачу - %s \n на узел - %s" % (trguser.username, trguser.fio, fullact, trg.visiblename)
+						mes = 'Задача ' + '"' + fullact + '"' + 'Выполнена успешно!!!'
+						Log.objects.create(user=trguser.username,log=fullact + ' на узле ' + trg.visiblename + ' - Успех')
 					elif result == 1:
-						mess = "Пользователь %s \n %s \n поставил задачу - %s \n на узел - %s \n Но задача уже выполнена и не требует действий." % (trguser.username, trguser.fio, text, trg.visiblename)
-						mes = 'Задача ' + '"' + text + '"' + ' уже выполнена для данного узла, и более не требует действий.'
-						Log.objects.create(user=trguser.username,log=text + ' на узле ' + trg.visiblename + ' - Уже выполнено')
+						mess = "Пользователь %s \n %s \n поставил задачу - %s \n на узел - %s \n Но задача уже выполнена и не требует действий." % (trguser.username, trguser.fio, fullact, trg.visiblename)
+						mes = 'Задача ' + '"' + fullact + '"' + ' уже выполнена для данного узла, и более не требует действий.'
+						Log.objects.create(user=trguser.username,log=fullact + ' на узле ' + trg.visiblename + ' - Уже выполнено')
 					else:
-						mess = "Пользователь %s \n %s \n поставил задачу - %s \n на узел - %s \n Но возникла ошибка!!" % (trguser.username, trguser.fio, text, trg.visiblename)
+						mess = "Пользователь %s \n %s \n поставил задачу - %s \n на узел - %s \n Но возникла ошибка!!" % (trguser.username, trguser.fio, fullact, trg.visiblename)
 						mes = 'Не удалось выполнить задание, просим связаться с нами по контактам ниже!'
-						Log.objects.create(user=trguser.username,log=text + ' на узле ' + trg.visiblename + ' - Ошибка')
+						Log.objects.create(user=trguser.username,log=fullact + ' на узле ' + trg.visiblename + ' - Ошибка')
 					bot.send_message(-1001425092968, mess) 
 				else:
-					mes = 'Задача ' + '"' + text + '"' + ' не назначена на данный узел'
+					mes = 'Задача ' + '"' + fullact + '"' + ' не назначена на данный узел'
 				bot.send_message(chat_id, mes)
 				return HttpResponse('ok')
 
