@@ -40,7 +40,7 @@ class Case(models.Model):
 
 
 class Target(models.Model):
-	TYPE = (("-","-"),("ovpn-client","ovpn-client"),("ppp-client","ppp-client"),("pptp-client","pptp-client"),("sstp-client","sstp-client"))
+	TYPE = (("-","-"),("ovpn-client","ovpn-client"),("ppp-client","ppp-client"),("pptp-client","pptp-client"),("sstp-client","sstp-client"),("ipip","ipip"))
 	name = models.CharField(max_length=250)
 	visiblename = models.CharField(max_length=250)
 	description = models.TextField()

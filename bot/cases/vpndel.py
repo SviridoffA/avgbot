@@ -1,4 +1,4 @@
-#!/usr/bin/python2
+#!/usr/bin/python
 import routeros_api
 import configparser
 
@@ -28,8 +28,11 @@ def action(trg):
 		for k in fileids:
 			file.remove(id=k)
 		for s in fwset:
-			if apifw == s['dst-port'] or apifwssl == s['dst-port']:
-				fw.remove(id=s['id'])
+			try:
+				if apifw == s['dst-port'] or apifwssl == s['dst-port']:
+					fw.remove(id=s['id'])
+			except:
+				pass
 		api.get_binary_resource('/').call('system/reboot')
 	else:
 		result = 1

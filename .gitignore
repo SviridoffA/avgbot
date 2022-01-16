@@ -3,3 +3,5 @@ bot/__pycache__/
 config.txt
 id_rsa
 id_rsa.pub
+tgmsg.sh
+settings.py

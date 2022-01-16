@@ -73,6 +73,8 @@ def bot(request):
 			else:
 				accs = 0
 				trguser = 0
+		else:
+			return HttpResponse('ok')
 
 #message steps
 		def name_step(chat_id,msgid,text):

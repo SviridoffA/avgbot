@@ -17,10 +17,12 @@ from django.contrib import admin
 from django.urls import path
 from django.conf.urls import url, include
 from bot.views import bot
+from monitoring.views import monit
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^hook/$', bot, name='bot'),
     url(r'^chaining/', include('smart_selects.urls')),
+    url(r'^monitoring/$', monit, name='monit')
 ]
 

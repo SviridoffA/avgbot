@@ -1,6 +1,6 @@
 #!/usr/bin/python
 import subprocess
 
-def action():
-	subprocess.call("/var/www/avgbot/bot/cases/tgmsg.sh 'ANTIBRUTE' 'IP banned'", shell=True)
-	pass
+def action(trg):
+	subprocess.call("/var/www/avgbot/bot/cases/tgmsg.sh 'TEST' 'ACTION'", shell=True)
+	return 2
